@@ -132,3 +132,5 @@ dmypy.json
 /Scripts
 pyvenv.cfg
 .vscode/
+share/
+Include/
