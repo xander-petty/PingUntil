@@ -10,6 +10,10 @@ from scapy.all import IP, ICMP, sr1
 from socket import gethostbyname as nslookup
 from socket import gethostbyaddr as reverse_lookup
 from time import sleep
+from flask import Flask, render_template, request
+from wtforms import Label, TextField, validators
+from flask_wtf import FlaskForm
+from os import urandom
 
 # BUILD NOTE - Constructing the backend as a class with functions first
 class PingUntil():
@@ -34,8 +38,9 @@ class PingUntil():
                 success += 1
                 print(f'Reply from {reply.src}')
         hops = self.trace()
-        last_good_hop = hops[int(len(hops) - 1)]
-        return last_good_hop
+        # last_good_hop = hops[int(len(hops) - 1)]
+        # return last_good_hop
+        return hops 
     def trace(self):
         failed = 0
         ttl = 1
@@ -52,3 +57,29 @@ class PingUntil():
                 hops.append(reply.src)
                 ttl += 1
         return hops 
+
+class PingForm(FlaskForm):
+    ip_label = Label('ip_label', text='Enter the IP Address to ping: ')
+    ip_entry = TextField(id='ip_entry', validators=[validators.required()])
+    trigger_label = Label('trigger_label', text='Enter the number of failed pings to set trigger: ')
+    trigger_entry = TextField(id='trigger_entry', validators=[validators.required()])
+
+app = Flask(__name__)
+app.config['DEBUG'] = True 
+app.config['SECRET_KEY'] = urandom(24)
+
+@app.route('/', methods=['GET', 'POST'])
+def main():
+    if request.method == 'GET':
+        form = PingForm()
+        return render_template('main.html', form=form)
+    elif request.method == 'POST':
+        ip = request.form['ip_entry']
+        trigger = request.form['trigger_entry']
+        pinger = PingUntil(ip, trigger)
+        fail_hops = pinger.run()
+        return render_template('results.html', target_ip=ip, hops=fail_hops)
+
+
+if __name__ == '__main__':
+    app.run(ssl_context='adhoc')

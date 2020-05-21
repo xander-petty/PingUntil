@@ -15,3 +15,4 @@ How to configure your environment:
             pip install wheel 
             pip install --upgrade wheel setuptools 
             pip install scapy flask flask_wtf wtforms
+            pip install pyopenssl
