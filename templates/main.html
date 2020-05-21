@@ -1,42 +1,44 @@
 {% extends "layout.html" %}
 {% block body %}
-<table>
-    <tr>
-        <td>
-            {{ form.ip_label }}
-        </td>
-        <td>
-            {{ form.ip_entry }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            {{ form.trigger_label }}
-        </td>
-        <td>
-            {{ form.trigger_entry }}
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-            <script type=text/javascript>
-                $(function() {
-                    $('a#submit').bind('click', function() {
-                        $.postJSON('/results',
-                            function(data) {
-                                //Return Nothing
-                            });
-                            return False
+<form method="POST">
+    <table>
+        <tr>
+            <td>
+                {{ form.ip_label }}
+            </td>
+            <td>
+                {{ form.ip_entry }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                {{ form.trigger_label }}
+            </td>
+            <td>
+                {{ form.trigger_entry }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+                <script type=text/javascript>
+                    $(function() {
+                        $('a#submit').bind('click', function() {
+                            $.postJSON('/results',
+                                function(data) {
+                                    //Return Nothing
+                                });
+                                return False
+                        });
                     });
-                });
-            </script>
-            <a href="#" id=submit>
-                <button class='btn btn-default'>
-                    Submit
-                </button>
-            </a> 
-        </td>
-    </tr>
-</table>
+                </script>
+                <a href="#" id=submit>
+                    <button class='btn btn-default'>
+                        Submit
+                    </button>
+                </a> 
+            </td>
+        </tr>
+    </table>
+</form>
 {% endblock body %}

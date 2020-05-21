@@ -64,6 +64,9 @@ class PingForm(FlaskForm):
     trigger_label = Label('trigger_label', text='Enter the number of failed pings to set trigger: ')
     trigger_entry = TextField(id='trigger_entry', validators=[validators.required()])
 
+class ResultsForm(FlaskForm):
+    ip = Label('ip_label', text=None)
+
 app = Flask(__name__)
 app.config['DEBUG'] = True 
 app.config['SECRET_KEY'] = urandom(24)
@@ -76,9 +79,14 @@ def main():
     elif request.method == 'POST':
         ip = request.form['ip_entry']
         trigger = request.form['trigger_entry']
-        pinger = PingUntil(ip, trigger)
+        working = True
+        while working:
+            pinger = PingUntil(ip, trigger)
+            working = False
+        ResultsForm.ip.text = ip
+        form = ResultsForm()
         fail_hops = pinger.run()
-        return render_template('results.html', target_ip=ip, hops=fail_hops)
+        return render_template('results.html', form=form, target_ip=ip, hops=fail_hops)
 
 
 if __name__ == '__main__':
